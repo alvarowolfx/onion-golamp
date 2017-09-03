@@ -5,5 +5,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Oie")
+	for i := 0; i < 10; i++ {
+		fmt.Println("Oie")
+	}
 }

@@ -6,6 +6,6 @@ import (
 
 func main() {
 	for i := 0; i < 10; i++ {
-		fmt.Println("Oie")
+		fmt.Printf("Oie %d\n", i)
 	}
 }

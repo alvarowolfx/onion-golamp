@@ -9,9 +9,10 @@ import (
 )
 
 type HomekitLamp struct {
-	Lamp  *GpioOutput
-	light *accessory.Lightbulb
-	t     hc.Transport
+	Lamp      *GpioOutput
+	light     *accessory.Lightbulb
+	transport hc.Transport
+	ticker    *time.Ticker
 }
 
 func NewHomekitLamp(lamp *GpioOutput) *HomekitLamp {
@@ -38,7 +39,8 @@ func (hkl *HomekitLamp) Start() {
 	// Monitor gpio state
 	go func() {
 		lastState := hkl.Lamp.state
-		for _ = range time.Tick(300 * time.Millisecond) {
+		hkl.ticker = time.NewTicker(300 * time.Millisecond)
+		for _ = range hkl.ticker.C {
 			newState := hkl.Lamp.state
 			if lastState != newState {
 				hkl.light.Lightbulb.On.SetValue(newState)
@@ -49,18 +51,15 @@ func (hkl *HomekitLamp) Start() {
 
 	config := hc.Config{Pin: "00102003"}
 	var err error
-	hkl.t, err = hc.NewIPTransport(config, hkl.light.Accessory)
+	hkl.transport, err = hc.NewIPTransport(config, hkl.light.Accessory)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	hc.OnTermination(func() {
-		hkl.t.Stop()
-	})
-
-	hkl.t.Start()
+	hkl.transport.Start()
 }
 
 func (hkl *HomekitLamp) Stop() {
-	hkl.t.Stop()
+	hkl.transport.Stop()
+	hkl.ticker.Stop()
 }

@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 )
 
 func main() {
@@ -18,22 +22,27 @@ func main() {
 	go hkLamp.Start() // Homekit server blocks execution
 
 	server := &http.Server{Addr: ":8080"}
-	go func() {
-		server.ListenAndServe()
-	}()
+	go server.ListenAndServe() // Http server blocks execution
 
 	log.Println("Http server started")
 
 	sigs := make(chan os.Signal, 1)
 	done := make(chan bool, 1)
+
+	signal.Notify(sigs, os.Interrupt, syscall.SIGTERM)
+
 	go func() {
 		sig := <-sigs // Wait for signal
+		log.Println(sig)
 
 		// Shutdown all services
-		server.Shutdown(nil)
 		hkLamp.Stop()
+		log.Println("Homekit stopped")
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
 
-		log.Println(sig)
+		server.Shutdown(ctx)
+		log.Println("Http server stopped")
 
 		done <- true
 	}()

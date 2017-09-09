@@ -9,10 +9,16 @@ import (
 )
 
 type HomekitLamp struct {
+<<<<<<< HEAD
 	Lamp      *GpioOutput
 	light     *accessory.Lightbulb
 	transport hc.Transport
 	ticker    *time.Ticker
+=======
+	Lamp  *GpioOutput
+	light *accessory.Lightbulb
+	t     hc.Transport
+>>>>>>> fe35cc8... [feat] Initial project version with homekit and gpioctl
 }
 
 func NewHomekitLamp(lamp *GpioOutput) *HomekitLamp {

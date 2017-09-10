@@ -12,7 +12,8 @@ import (
 
 func main() {
 
-	led := NewGpioOutput(11)
+	led := NewLed(11)
+	defer led.Close()
 	led.Off() // Turn off led on start
 
 	httpLamp := NewHttpLamp(led)

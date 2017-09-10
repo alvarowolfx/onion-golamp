@@ -9,19 +9,13 @@ import (
 )
 
 type HomekitLamp struct {
-<<<<<<< HEAD
-	Lamp      *GpioOutput
+	Lamp      Lamp
 	light     *accessory.Lightbulb
 	transport hc.Transport
 	ticker    *time.Ticker
-=======
-	Lamp  *GpioOutput
-	light *accessory.Lightbulb
-	t     hc.Transport
->>>>>>> fe35cc8... [feat] Initial project version with homekit and gpioctl
 }
 
-func NewHomekitLamp(lamp *GpioOutput) *HomekitLamp {
+func NewHomekitLamp(lamp Lamp) *HomekitLamp {
 	return &HomekitLamp{
 		Lamp: lamp,
 	}
@@ -44,10 +38,10 @@ func (hkl *HomekitLamp) Start() {
 
 	// Monitor gpio state
 	go func() {
-		lastState := hkl.Lamp.state
+		lastState := hkl.Lamp.GetCurrentState()
 		hkl.ticker = time.NewTicker(300 * time.Millisecond)
 		for _ = range hkl.ticker.C {
-			newState := hkl.Lamp.state
+			newState := hkl.Lamp.GetCurrentState()
 			if lastState != newState {
 				hkl.light.Lightbulb.On.SetValue(newState)
 				lastState = newState

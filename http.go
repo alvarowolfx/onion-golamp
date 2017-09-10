@@ -7,7 +7,7 @@ import (
 )
 
 type HttpLamp struct {
-	Lamp *GpioOutput
+	Lamp Lamp
 }
 
 type HttpLampResponse struct {
@@ -15,16 +15,16 @@ type HttpLampResponse struct {
 	State   string `json:"state"`
 }
 
-func NewHttpLamp(lamp *GpioOutput) *HttpLamp {
+func NewHttpLamp(lamp Lamp) *HttpLamp {
 	return &HttpLamp{
 		Lamp: lamp,
 	}
 }
 
 func (hl *HttpLamp) Start() {
-	pin := hl.Lamp.Pin
-	onURL := fmt.Sprintf("/lamp/%d/on", pin)
-	offURL := fmt.Sprintf("/lamp/%d/off", pin)
+	id := hl.Lamp.ID()
+	onURL := fmt.Sprintf("/lamp/%d/on", id)
+	offURL := fmt.Sprintf("/lamp/%d/off", id)
 
 	http.HandleFunc(onURL, func(res http.ResponseWriter, req *http.Request) {
 		hl.Lamp.On()

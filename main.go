@@ -12,7 +12,7 @@ import (
 
 func main() {
 
-	led := NewLed(11)
+	led := NewLed("11")
 	defer led.Close()
 	led.Off() // Turn off led on start
 

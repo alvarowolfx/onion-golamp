@@ -6,7 +6,7 @@ import (
 )
 
 type Lamp interface {
-	ID() int
+	ID() string
 	On()
 	Off()
 	Toggle()

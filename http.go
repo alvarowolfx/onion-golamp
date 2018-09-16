@@ -23,8 +23,8 @@ func NewHttpLamp(lamp Lamp) *HttpLamp {
 
 func (hl *HttpLamp) Start() {
 	id := hl.Lamp.ID()
-	onURL := fmt.Sprintf("/lamp/%d/on", id)
-	offURL := fmt.Sprintf("/lamp/%d/off", id)
+	onURL := fmt.Sprintf("/lamp/%s/on", id)
+	offURL := fmt.Sprintf("/lamp/%s/off", id)
 
 	http.HandleFunc(onURL, func(res http.ResponseWriter, req *http.Request) {
 		hl.Lamp.On()

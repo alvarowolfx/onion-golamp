@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/brian-armstrong/gpio"
+	"periph.io/x/periph/conn/gpio"
+	"periph.io/x/periph/conn/gpio/gpioreg"
 )
 
 type Lamp interface {
@@ -14,13 +15,13 @@ type Lamp interface {
 }
 
 type Led struct {
-	Pin     int
-	gpioPin gpio.Pin
+	Pin     string
+	gpioPin gpio.PinIO
 	state   bool
 }
 
-func NewLed(pin int) *Led {
-	gpioPin := gpio.NewOutput(uint(pin), false)
+func NewLed(pin string) *Led {
+	gpioPin := gpioreg.ByName(pin)
 	return &Led{
 		Pin:     pin,
 		gpioPin: gpioPin,
@@ -28,17 +29,17 @@ func NewLed(pin int) *Led {
 	}
 }
 
-func (g *Led) ID() int {
+func (g *Led) ID() string {
 	return g.Pin
 }
 
 func (g *Led) On() {
-	g.gpioPin.High()
+	g.gpioPin.Out(gpio.High)
 	g.state = true
 }
 
 func (g *Led) Off() {
-	g.gpioPin.Low()
+	g.gpioPin.Out(gpio.Low)
 	g.state = false
 }
 
@@ -56,5 +57,5 @@ func (g *Led) GetCurrentState() bool {
 
 func (g *Led) Close() {
 	g.Off()
-	g.gpioPin.Close()
+	g.gpioPin.Halt()
 }

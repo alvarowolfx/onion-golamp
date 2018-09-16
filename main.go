@@ -8,9 +8,15 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"periph.io/x/periph/host"
 )
 
 func main() {
+	_, err := host.Init() // Init periph.io
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	led := NewLed("11")
 	defer led.Close()
